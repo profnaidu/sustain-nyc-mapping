@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUSTAIN-NYC: Community Environmental Stories</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        .leaflet-popup-content-wrapper {
+            border-radius: 8px;
+        }
+        .story-marker {
+            border: 3px solid white;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .sidebar {
+            height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Header -->
+    <div class="bg-green-700 text-white p-4">
+        <h1 class="text-2xl font-bold">SUSTAIN-NYC: Community Environmental Stories</h1>
+        <p class="text-green-100">Interactive Environmental Justice Mapping Platform</p>
+        
+        <!-- Search Bar -->
+        <div class="mt-3 flex gap-2">
+            <div class="flex-1 relative">
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search any location worldwide (e.g., 'South Bronx', 'Hunt's Point Ave, Bronx')"
+                    class="w-full p-2 pl-8 rounded text-gray-800 text-sm"
+                />
+                <svg class="absolute left-2 top-2.5 w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </div>
+            <button
+                onclick="searchLocation()"
+                class="bg-green-600 hover:bg-green-800 px-4 py-2 rounded text-sm"
+            >
+                Search
+            </button>
+        </div>
+    </div>
+
+    <div class="flex" style="height: calc(100vh - 120px);">
+        <!-- Sidebar -->
+        <div class="w-80 bg-white shadow-lg p-4 sidebar">
+            <div class="mb-6">
+                <h3 class="font-semibold mb-3 flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z"></path>
+                    </svg>
+                    Story Categories
+                </h3>
+                <div class="space-y-2">
+                    <button onclick="filterStories('all')" class="filter-btn w-full text-left px-3 py-2 rounded text-sm bg-green-100 text-green-800 border border-green-300" data-category="all">
+                        All Stories
+                    </button>
+                    <button onclick="filterStories('air-quality')" class="filter-btn w-full text-left px-3 py-2 rounded text-sm hover:bg-gray-100" data-category="air-quality">
+                        Air Quality
+                    </button>
+                    <button onclick="filterStories('heat')" class="filter-btn w-full text-left px-3 py-2 rounded text-sm hover:bg-gray-100" data-category="heat">
+                        Heat & Climate
+                    </button>
+                    <button onclick="filterStories('solutions')" class="filter-btn w-full text-left px-3 py-2 rounded text-sm hover:bg-gray-100" data-category="solutions">
+                        Community Solutions
+                    </button>
+                    <button onclick="filterStories('historical')" class="filter-btn w-full text-left px-3 py-2 rounded text-sm hover:bg-gray-100" data-category="historical">
+                        Historical Context
+                    </button>
+                    <button onclick="filterStories('health')" class="filter-btn w-full text-left px-3 py-2 rounded text-sm hover:bg-gray-100" data-category="health">
+                        Health Impacts
+                    </button>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="font-semibold mb-3 flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                    </svg>
+                    Data Layers
+                </h3>
+                <div class="space-y-2">
+                    <label class="flex items-center">
+                        <input type="checkbox" id="airQualityLayer" checked class="mr-2" onchange="toggleLayer('airQuality')">
+                        <span class="text-sm">Air Quality Zones</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" id="heatIslandLayer" checked class="mr-2" onchange="toggleLayer('heatIsland')">
+                        <span class="text-sm">Heat Islands</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" id="storiesLayer" checked class="mr-2" onchange="toggleLayer('stories')">
+                        <span class="text-sm">Community Stories</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Story List -->
+            <div>
+                <h3 class="font-semibold mb-3">Community Stories (<span id="storyCount">5</span>)</h3>
+                <div id="storyList" class="space-y-3">
+                    <!-- Stories will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Map Container -->
+        <div class="flex-1 relative">
+            <div id="map" class="w-full h-full">
+                <!-- Loading indicator -->
+                <div id="mapLoading" class="flex items-center justify-center h-full bg-gray-50">
+                    <div class="text-center">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+                        <p class="text-gray-600">Loading interactive map...</p>
+                        <p class="text-sm text-gray-500 mt-2">If this takes too long, please refresh the page</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Map Instructions -->
+            <div class="absolute top-4 right-4 bg-white p-3 rounded shadow-lg max-w-xs">
+                <h4 class="font-semibold text-sm mb-2">How to Use</h4>
+                <ul class="text-xs text-gray-600 space-y-1">
+                    <li>• Drag to pan around the map</li>
+                    <li>• Scroll to zoom in/out</li>
+                    <li>• Click story markers to read details</li>
+                    <li>• Use search to find any location</li>
+                    <li>• Filter stories by category</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script>
+        // Global variables
+        let map;
+        let storyMarkers = [];
+        let airQualityLayers = [];
+        let heatIslandLayers = [];
+        let selectedCategory = 'all';
+        let selectedStory = null;
+
+        // Sample story data with real South Bronx coordinates
+        const stories = [
+            {
+                id: 1,
+                title: "Air Quality Near Hunts Point",
+                author: "Maria, Long-time Resident",
+                category: "air-quality",
+                type: "audio",
+                lat: 40.8078,
+                lng: -73.8820,
+                preview: "The smell hits you as soon as you step outside. Living next to the waste transfer station, we deal with constant diesel fumes from trucks. My kids can't play outside on bad air days.",
+                timestamp: "2024",
+                tags: ["pollution", "health", "community"],
+                fullStory: "Every morning when I wake up, the first thing I notice is the smell. Heavy diesel fumes mixed with something metallic that makes your throat burn. We live three blocks from the Hunt's Point waste transfer station, and the truck traffic never stops. I've been documenting air quality here for two years now, and the patterns are clear - the worst days coincide with the heaviest truck traffic. My daughter has asthma, and we've learned to check the air quality before she goes outside to play."
+            },
+            {
+                id: 2,
+                title: "Heat Island Effect on Concourse",
+                author: "CCNY Student Fellow - Jasmine",
+                category: "heat",
+                type: "photo-story",
+                lat: 40.8176,
+                lng: -73.9182,
+                preview: "During my transect walk, I documented how concrete absorbs heat differently across neighborhoods. The temperature difference between tree-lined streets and concrete corridors can be 15+ degrees.",
+                timestamp: "2024",
+                tags: ["climate", "urban-planning", "health"],
+                fullStory: "As part of my SUSTAIN-NYC fellowship, I've been documenting temperature variations across the South Bronx. Using a portable thermometer during summer transect walks, I've found that areas with extensive concrete and limited tree cover can be 15-20 degrees hotter than nearby tree-lined streets. The Grand Concourse, despite being a major thoroughfare, actually has cooler microclimates thanks to its tree canopy. But side streets with little vegetation become heat traps that make life unbearable for residents without air conditioning."
+            },
+            {
+                id: 3,
+                title: "Community Garden Resistance",
+                author: "Carlos, Community Organizer",
+                category: "solutions",
+                type: "video",
+                lat: 40.8201,
+                lng: -73.9067,
+                preview: "Our garden isn't just about food - it's about taking back our air, our health, our community. Every plant we grow is an act of resistance against environmental racism.",
+                timestamp: "2024",
+                tags: ["organizing", "green-space", "resistance"],
+                fullStory: "The Melrose Community Garden started in 2018 when we took over an abandoned lot that had been a dumping ground for decades. What people don't understand is that this garden is environmental justice in action. Every tomato plant, every patch of herbs, every tree we've planted is cleaning the air and cooling the neighborhood. We've measured the temperature difference - it's 8-10 degrees cooler in the garden than on the surrounding concrete. We run educational workshops, provide fresh food for families, and create a green oasis in a neighborhood that was systematically disinvested from for generations."
+            },
+            {
+                id: 4,
+                title: "Historical Redlining Impact",
+                author: "Dr. Kucheva Research Team",
+                category: "historical",
+                type: "data-story",
+                lat: 40.8155,
+                lng: -73.9254,
+                preview: "This area was redlined in the 1930s, leading to decades of disinvestment that still shapes environmental conditions today. The correlation between historical redlining maps and current environmental hazards is undeniable.",
+                timestamp: "1930s-Present",
+                tags: ["redlining", "historical", "policy"],
+                fullStory: "Our research overlaying 1930s redlining maps with current environmental hazard data reveals the lasting impact of structural racism. This neighborhood, marked as 'hazardous' and colored red on Depression-era maps, was systematically denied investment for decades. Today, it has three times the concentration of environmental hazards compared to historically 'green' (desirable) neighborhoods just miles away. The placement of waste transfer stations, highway infrastructure, and industrial facilities directly correlates with these historical redlining boundaries. Environmental racism isn't just historical - it's actively maintained through zoning decisions and infrastructure placement."
+            },
+            {
+                id: 5,
+                title: "Asthma Rates in Mott Haven",
+                author: "Community Health Worker - Sandra",
+                category: "health",
+                type: "oral-history",
+                lat: 40.8065,
+                lng: -73.9215,
+                preview: "Every family on my block has someone with asthma. The kids can't play outside on bad air days. We've learned to read the wind patterns and know when the air will be thick with fumes.",
+                timestamp: "2024",
+                tags: ["health", "children", "air-quality"],
+                fullStory: "I've been a community health worker in Mott Haven for fifteen years, and I've watched asthma rates climb. In my building alone, 12 out of 20 families have at least one family member with asthma. The children are the most affected. We've developed an informal network where parents text each other on high pollution days - when the wind blows from the highway or when truck traffic is heavy. The kids have learned to recognize the signs too. They'll come inside and say 'Mami, the air tastes funny today.' It breaks my heart that children have to be environmental monitors just to stay healthy."
+            }
+        ];
+
+        // Initialize map
+        function initMap() {
+            try {
+                // Check if Leaflet is available
+                if (typeof L === 'undefined') {
+                    console.error('Leaflet library not loaded');
+                    document.getElementById('map').innerHTML = '<div class="flex items-center justify-center h-full bg-red-50"><div class="text-center"><p class="text-red-600">Map failed to load. Please refresh the page.</p></div></div>';
+                    return;
+                }
+
+                // Create map centered on South Bronx
+                map = L.map('map').setView([40.8154, -73.9123], 13);
+
+                // Add OpenStreetMap tiles
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors',
+                    errorTileUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgZmlsbD0iI2VlZSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5NYXAgVGlsZSBVbmF2YWlsYWJsZTwvdGV4dD48L3N2Zz4='
+                }).addTo(map);
+
+                // Add stories to map
+                addStoriesToMap();
+                
+                // Add environmental data layers
+                addEnvironmentalLayers();
+                
+                // Populate story list
+                updateStoryList();
+                
+                // Hide loading indicator
+                const loadingEl = document.getElementById('mapLoading');
+                if (loadingEl) {
+                    loadingEl.style.display = 'none';
+                }
+                
+                console.log('Map initialized successfully');
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                document.getElementById('map').innerHTML = '<div class="flex items-center justify-center h-full bg-red-50"><div class="text-center"><p class="text-red-600">Map initialization failed. Please refresh the page.</p><p class="text-sm text-gray-600 mt-2">Error: ' + error.message + '</p></div></div>';
+            }
+        }
+
+        // Add story markers to map
+        function addStoriesToMap() {
+            stories.forEach(story => {
+                const color = getCategoryColor(story.category);
+                const icon = getCategoryIcon(story.type);
+                
+                // Create custom marker
+                const marker = L.circleMarker([story.lat, story.lng], {
+                    radius: 12,
+                    fillColor: color,
+                    color: '#fff',
+                    weight: 3,
+                    opacity: 1,
+                    fillOpacity: 0.8,
+                    className: 'story-marker'
+                }).addTo(map);
+
+                // Create popup content
+                const popupContent = `
+                    <div class="p-3 max-w-sm">
+                        <h4 class="font-semibold text-base mb-2">${story.title}</h4>
+                        <p class="text-sm text-gray-600 mb-2">${story.author}</p>
+                        <p class="text-sm text-gray-700 mb-3">${story.preview}</p>
+                        <div class="flex flex-wrap gap-1 mb-3">
+                            ${story.tags.map(tag => `<span class="text-xs bg-gray-100 px-2 py-1 rounded">#${tag}</span>`).join('')}
+                        </div>
+                        <button onclick="showFullStory(${story.id})" class="w-full bg-green-600 text-white text-sm py-2 rounded hover:bg-green-700">
+                            Read Full Story
+                        </button>
+                    </div>
+                `;
+                
+                marker.bindPopup(popupContent, {
+                    maxWidth: 300,
+                    className: 'custom-popup'
+                });
+                
+                marker.on('click', () => {
+                    selectStory(story.id);
+                });
+
+                storyMarkers.push({marker, story});
+            });
+        }
+
+        // Add environmental data layers
+        function addEnvironmentalLayers() {
+            // Air Quality Zones
+            const airQualityZones = [
+                {lat: 40.8078, lng: -73.8820, radius: 800, intensity: 'high'},
+                {lat: 40.8155, lng: -73.9254, radius: 600, intensity: 'moderate'},
+                {lat: 40.8201, lng: -73.9067, radius: 500, intensity: 'moderate'}
+            ];
+
+            airQualityZones.forEach(zone => {
+                const color = zone.intensity === 'high' ? '#dc2626' : '#eab308';
+                const circle = L.circle([zone.lat, zone.lng], {
+                    radius: zone.radius,
+                    fillColor: color,
+                    color: color,
+                    weight: 1,
+                    opacity: 0.3,
+                    fillOpacity: 0.2
+                }).addTo(map);
+                
+                circle.bindTooltip(`Air Quality: ${zone.intensity}`, {permanent: false});
+                airQualityLayers.push(circle);
+            });
+
+            // Heat Islands
+            const heatIslands = [
+                {lat: 40.8176, lng: -73.9182, radius: 700, intensity: 'extreme'},
+                {lat: 40.8065, lng: -73.9215, radius: 550, intensity: 'high'}
+            ];
+
+            heatIslands.forEach(island => {
+                const color = island.intensity === 'extreme' ? '#ea580c' : '#f97316';
+                const circle = L.circle([island.lat, island.lng], {
+                    radius: island.radius,
+                    fillColor: color,
+                    color: color,
+                    weight: 1,
+                    opacity: 0.4,
+                    fillOpacity: 0.3
+                }).addTo(map);
+                
+                circle.bindTooltip(`Heat Island: ${island.intensity}`, {permanent: false});
+                heatIslandLayers.push(circle);
+            });
+        }
+
+        // Get category color
+        function getCategoryColor(category) {
+            const colors = {
+                'air-quality': '#dc2626',
+                'heat': '#ea580c',
+                'solutions': '#16a34a',
+                'historical': '#7c3aed',
+                'health': '#2563eb'
+            };
+            return colors[category] || '#6b7280';
+        }
+
+        // Get category icon
+        function getCategoryIcon(type) {
+            // Returns appropriate icon based on story type
+            return '📍'; // Simplified for this version
+        }
+
+        // Filter stories by category
+        function filterStories(category) {
+            selectedCategory = category;
+            
+            // Update button styles
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.className = 'filter-btn w-full text-left px-3 py-2 rounded text-sm hover:bg-gray-100';
+            });
+            document.querySelector(`[data-category="${category}"]`).className = 
+                'filter-btn w-full text-left px-3 py-2 rounded text-sm bg-green-100 text-green-800 border border-green-300';
+
+            // Filter markers
+            storyMarkers.forEach(({marker, story}) => {
+                if (category === 'all' || story.category === category) {
+                    map.addLayer(marker);
+                } else {
+                    map.removeLayer(marker);
+                }
+            });
+
+            updateStoryList();
+        }
+
+        // Update story list in sidebar
+        function updateStoryList() {
+            const filteredStories = stories.filter(story => 
+                selectedCategory === 'all' || story.category === selectedCategory
+            );
+            
+            document.getElementById('storyCount').textContent = filteredStories.length;
+            
+            const storyListHTML = filteredStories.map(story => `
+                <div onclick="focusOnStory(${story.id})" class="story-item p-3 rounded border cursor-pointer transition-all border-gray-200 hover:border-gray-300 ${selectedStory === story.id ? 'border-green-500 bg-green-50' : ''}">
+                    <div class="flex items-start justify-between mb-2">
+                        <h4 class="font-medium text-sm">${story.title}</h4>
+                        <div class="w-4 h-4 rounded" style="background-color: ${getCategoryColor(story.category)}"></div>
+                    </div>
+                    <p class="text-xs text-gray-600 mb-2">${story.author}</p>
+                    <p class="text-xs text-gray-700">${story.preview.substring(0, 100)}...</p>
+                    <div class="flex items-center justify-between mt-2">
+                        <span class="text-xs px-2 py-1 rounded text-white" style="background-color: ${getCategoryColor(story.category)}">
+                            ${story.category.replace('-', ' ')}
+                        </span>
+                        <span class="text-xs text-gray-500">${story.timestamp}</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('storyList').innerHTML = storyListHTML;
+        }
+
+        // Focus on specific story
+        function focusOnStory(storyId) {
+            const story = stories.find(s => s.id === storyId);
+            if (story) {
+                map.setView([story.lat, story.lng], 16);
+                selectStory(storyId);
+                
+                // Open popup
+                const markerData = storyMarkers.find(m => m.story.id === storyId);
+                if (markerData) {
+                    markerData.marker.openPopup();
+                }
+            }
+        }
+
+        // Select story
+        function selectStory(storyId) {
+            selectedStory = storyId;
+            updateStoryList();
+        }
+
+        // Show full story
+        function showFullStory(storyId) {
+            const story = stories.find(s => s.id === storyId);
+            if (story) {
+                alert(`Full Story: ${story.title}\n\n${story.fullStory}`);
+                // In a real implementation, you'd open a modal or navigate to a detailed page
+            }
+        }
+
+        // Toggle data layers
+        function toggleLayer(layerType) {
+            if (layerType === 'airQuality') {
+                const isChecked = document.getElementById('airQualityLayer').checked;
+                airQualityLayers.forEach(layer => {
+                    if (isChecked) {
+                        map.addLayer(layer);
+                    } else {
+                        map.removeLayer(layer);
+                    }
+                });
+            } else if (layerType === 'heatIsland') {
+                const isChecked = document.getElementById('heatIslandLayer').checked;
+                heatIslandLayers.forEach(layer => {
+                    if (isChecked) {
+                        map.addLayer(layer);
+                    } else {
+                        map.removeLayer(layer);
+                    }
+                });
+            } else if (layerType === 'stories') {
+                const isChecked = document.getElementById('storiesLayer').checked;
+                storyMarkers.forEach(({marker, story}) => {
+                    if (isChecked && (selectedCategory === 'all' || story.category === selectedCategory)) {
+                        map.addLayer(marker);
+                    } else {
+                        map.removeLayer(marker);
+                    }
+                });
+            }
+        }
+
+        // Search for location
+        async function searchLocation() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) {
+                alert('Please enter a location to search for.');
+                return;
+            }
+
+            if (!map) {
+                alert('Map is not yet initialized. Please wait a moment and try again.');
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&countrycodes=us`
+                );
+                
+                if (!response.ok) {
+                    throw new Error(`Search failed: ${response.status}`);
+                }
+                
+                const results = await response.json();
+                
+                if (results.length > 0) {
+                    const { lat, lon, display_name } = results[0];
+                    map.setView([parseFloat(lat), parseFloat(lon)], 15);
+                    
+                    // Optional: Add a temporary marker to show the searched location
+                    if (window.searchMarker) {
+                        map.removeLayer(window.searchMarker);
+                    }
+                    window.searchMarker = L.marker([parseFloat(lat), parseFloat(lon)])
+                        .addTo(map)
+                        .bindPopup(`<strong>Search Result:</strong><br>${display_name}`)
+                        .openPopup();
+                    
+                    console.log('Search successful:', display_name);
+                } else {
+                    alert('Location not found. Try searching for a specific address, neighborhood, or landmark (e.g., "South Bronx, NY" or "Hunt\'s Point, Bronx").');
+                }
+            } catch (error) {
+                console.error('Search error:', error);
+                alert('Search temporarily unavailable. Please check your internet connection and try again.');
+            }
+        }
+
+        // Allow enter key for search
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchLocation();
+            }
+        });
+
+        // Check if Leaflet is loaded and initialize map
+        function checkLeafletAndInit() {
+            if (typeof L !== 'undefined') {
+                initMap();
+            } else {
+                console.log('Waiting for Leaflet to load...');
+                setTimeout(checkLeafletAndInit, 100);
+            }
+        }
+
+        // Initialize map when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLeafletAndInit();
+        });
+    </script>
+</body>
+</html>
