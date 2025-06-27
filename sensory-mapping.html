@@ -1,0 +1,578 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2487.7">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;SUSTAIN-NYC: Community Environmental Stories&lt;/title&gt;</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Leaflet CSS --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" /&gt;</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Tailwind CSS --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.leaflet-popup-content-wrapper {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.story-marker {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border: 3px solid white;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 50%;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>box-shadow: 0 4px 8px rgba(0,0,0,0.3);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.sidebar {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>height: calc(100vh - 120px);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>overflow-y: auto;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body class="bg-gray-100"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Header --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="bg-green-700 text-white p-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;h1 class="text-2xl font-bold"&gt;SUSTAIN-NYC: Community Environmental Stories&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p class="text-green-100"&gt;Interactive Environmental Justice Mapping Platform&lt;/p&gt;</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Search Bar --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="mt-3 flex gap-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="flex-1 relative"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;input</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>type="text"</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>id="searchInput"</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>placeholder="Search any location worldwide (e.g., 'South Bronx', 'Hunt's Point Ave, Bronx')"</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>class="w-full p-2 pl-8 rounded text-gray-800 text-sm"</p>
+<p class="p1"><span class="Apple-converted-space">                </span>/&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;svg class="absolute left-2 top-2.5 w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"&gt;&lt;/path&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button</p>
+<p class="p1"><span class="Apple-converted-space">                </span>onclick="searchLocation()"</p>
+<p class="p1"><span class="Apple-converted-space">                </span>class="bg-green-600 hover:bg-green-800 px-4 py-2 rounded text-sm"</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>Search</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="flex" style="height: calc(100vh - 120px);"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Sidebar --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="w-80 bg-white shadow-lg p-4 sidebar"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="mb-6"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h3 class="font-semibold mb-3 flex items-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z"&gt;&lt;/path&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>Story Categories</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="space-y-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onclick="filterStories('all')" class="filter-btn w-full text-left px-3 py-2 rounded text-sm bg-green-100 text-green-800 border border-green-300" data-category="all"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>All Stories</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onclick="filterStories('air-quality')" class="filter-btn w-full text-left px-3 py-2 rounded text-sm hover:bg-gray-100" data-category="air-quality"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>Air Quality</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onclick="filterStories('heat')" class="filter-btn w-full text-left px-3 py-2 rounded text-sm hover:bg-gray-100" data-category="heat"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>Heat &amp; Climate</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onclick="filterStories('solutions')" class="filter-btn w-full text-left px-3 py-2 rounded text-sm hover:bg-gray-100" data-category="solutions"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>Community Solutions</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onclick="filterStories('historical')" class="filter-btn w-full text-left px-3 py-2 rounded text-sm hover:bg-gray-100" data-category="historical"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>Historical Context</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onclick="filterStories('health')" class="filter-btn w-full text-left px-3 py-2 rounded text-sm hover:bg-gray-100" data-category="health"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>Health Impacts</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="mb-6"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h3 class="font-semibold mb-3 flex items-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"&gt;&lt;/path&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>Data Layers</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="space-y-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;label class="flex items-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;input type="checkbox" id="airQualityLayer" checked class="mr-2" onchange="toggleLayer('airQuality')"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;span class="text-sm"&gt;Air Quality Zones&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;label class="flex items-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;input type="checkbox" id="heatIslandLayer" checked class="mr-2" onchange="toggleLayer('heatIsland')"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;span class="text-sm"&gt;Heat Islands&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;label class="flex items-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;input type="checkbox" id="storiesLayer" checked class="mr-2" onchange="toggleLayer('stories')"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;span class="text-sm"&gt;Community Stories&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;!-- Story List --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h3 class="font-semibold mb-3"&gt;Community Stories (&lt;span id="storyCount"&gt;5&lt;/span&gt;)&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="storyList" class="space-y-3"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;!-- Stories will be populated here --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Map Container --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex-1 relative"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div id="map" class="w-full h-full"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Loading indicator --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="mapLoading" class="flex items-center justify-center h-full bg-gray-50"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p class="text-gray-600"&gt;Loading interactive map...&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p class="text-sm text-gray-500 mt-2"&gt;If this takes too long, please refresh the page&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;!-- Map Instructions --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="absolute top-4 right-4 bg-white p-3 rounded shadow-lg max-w-xs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h4 class="font-semibold text-sm mb-2"&gt;How to Use&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;ul class="text-xs text-gray-600 space-y-1"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;li&gt;• Drag to pan around the map&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;li&gt;• Scroll to zoom in/out&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;li&gt;• Click story markers to read details&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;li&gt;• Use search to find any location&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;li&gt;• Filter stories by category&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Leaflet JavaScript --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"&gt;&lt;/script&gt;</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Global variables</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let map;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let storyMarkers = [];</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let airQualityLayers = [];</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let heatIslandLayers = [];</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let selectedCategory = 'all';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let selectedStory = null;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Sample story data with real South Bronx coordinates</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const stories = [</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{</p>
+<p class="p1"><span class="Apple-converted-space">                </span>id: 1,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>title: "Air Quality Near Hunts Point",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>author: "Maria, Long-time Resident",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>category: "air-quality",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>type: "audio",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>lat: 40.8078,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>lng: -73.8820,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>preview: "The smell hits you as soon as you step outside. Living next to the waste transfer station, we deal with constant diesel fumes from trucks. My kids can't play outside on bad air days.",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>timestamp: "2024",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tags: ["pollution", "health", "community"],</p>
+<p class="p1"><span class="Apple-converted-space">                </span>fullStory: "Every morning when I wake up, the first thing I notice is the smell. Heavy diesel fumes mixed with something metallic that makes your throat burn. We live three blocks from the Hunt's Point waste transfer station, and the truck traffic never stops. I've been documenting air quality here for two years now, and the patterns are clear - the worst days coincide with the heaviest truck traffic. My daughter has asthma, and we've learned to check the air quality before she goes outside to play."</p>
+<p class="p1"><span class="Apple-converted-space">            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{</p>
+<p class="p1"><span class="Apple-converted-space">                </span>id: 2,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>title: "Heat Island Effect on Concourse",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>author: "CCNY Student Fellow - Jasmine",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>category: "heat",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>type: "photo-story",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>lat: 40.8176,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>lng: -73.9182,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>preview: "During my transect walk, I documented how concrete absorbs heat differently across neighborhoods. The temperature difference between tree-lined streets and concrete corridors can be 15+ degrees.",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>timestamp: "2024",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tags: ["climate", "urban-planning", "health"],</p>
+<p class="p1"><span class="Apple-converted-space">                </span>fullStory: "As part of my SUSTAIN-NYC fellowship, I've been documenting temperature variations across the South Bronx. Using a portable thermometer during summer transect walks, I've found that areas with extensive concrete and limited tree cover can be 15-20 degrees hotter than nearby tree-lined streets. The Grand Concourse, despite being a major thoroughfare, actually has cooler microclimates thanks to its tree canopy. But side streets with little vegetation become heat traps that make life unbearable for residents without air conditioning."</p>
+<p class="p1"><span class="Apple-converted-space">            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{</p>
+<p class="p1"><span class="Apple-converted-space">                </span>id: 3,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>title: "Community Garden Resistance",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>author: "Carlos, Community Organizer",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>category: "solutions",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>type: "video",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>lat: 40.8201,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>lng: -73.9067,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>preview: "Our garden isn't just about food - it's about taking back our air, our health, our community. Every plant we grow is an act of resistance against environmental racism.",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>timestamp: "2024",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tags: ["organizing", "green-space", "resistance"],</p>
+<p class="p1"><span class="Apple-converted-space">                </span>fullStory: "The Melrose Community Garden started in 2018 when we took over an abandoned lot that had been a dumping ground for decades. What people don't understand is that this garden is environmental justice in action. Every tomato plant, every patch of herbs, every tree we've planted is cleaning the air and cooling the neighborhood. We've measured the temperature difference - it's 8-10 degrees cooler in the garden than on the surrounding concrete. We run educational workshops, provide fresh food for families, and create a green oasis in a neighborhood that was systematically disinvested from for generations."</p>
+<p class="p1"><span class="Apple-converted-space">            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{</p>
+<p class="p1"><span class="Apple-converted-space">                </span>id: 4,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>title: "Historical Redlining Impact",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>author: "Dr. Kucheva Research Team",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>category: "historical",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>type: "data-story",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>lat: 40.8155,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>lng: -73.9254,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>preview: "This area was redlined in the 1930s, leading to decades of disinvestment that still shapes environmental conditions today. The correlation between historical redlining maps and current environmental hazards is undeniable.",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>timestamp: "1930s-Present",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tags: ["redlining", "historical", "policy"],</p>
+<p class="p1"><span class="Apple-converted-space">                </span>fullStory: "Our research overlaying 1930s redlining maps with current environmental hazard data reveals the lasting impact of structural racism. This neighborhood, marked as 'hazardous' and colored red on Depression-era maps, was systematically denied investment for decades. Today, it has three times the concentration of environmental hazards compared to historically 'green' (desirable) neighborhoods just miles away. The placement of waste transfer stations, highway infrastructure, and industrial facilities directly correlates with these historical redlining boundaries. Environmental racism isn't just historical - it's actively maintained through zoning decisions and infrastructure placement."</p>
+<p class="p1"><span class="Apple-converted-space">            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{</p>
+<p class="p1"><span class="Apple-converted-space">                </span>id: 5,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>title: "Asthma Rates in Mott Haven",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>author: "Community Health Worker - Sandra",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>category: "health",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>type: "oral-history",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>lat: 40.8065,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>lng: -73.9215,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>preview: "Every family on my block has someone with asthma. The kids can't play outside on bad air days. We've learned to read the wind patterns and know when the air will be thick with fumes.",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>timestamp: "2024",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tags: ["health", "children", "air-quality"],</p>
+<p class="p1"><span class="Apple-converted-space">                </span>fullStory: "I've been a community health worker in Mott Haven for fifteen years, and I've watched asthma rates climb. In my building alone, 12 out of 20 families have at least one family member with asthma. The children are the most affected. We've developed an informal network where parents text each other on high pollution days - when the wind blows from the highway or when truck traffic is heavy. The kids have learned to recognize the signs too. They'll come inside and say 'Mami, the air tastes funny today.' It breaks my heart that children have to be environmental monitors just to stay healthy."</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>];</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Initialize map</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function initMap() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Check if Leaflet is available</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (typeof L === 'undefined') {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>console.error('Leaflet library not loaded');</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>document.getElementById('map').innerHTML = '&lt;div class="flex items-center justify-center h-full bg-red-50"&gt;&lt;div class="text-center"&gt;&lt;p class="text-red-600"&gt;Map failed to load. Please refresh the page.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Create map centered on South Bronx</p>
+<p class="p1"><span class="Apple-converted-space">                </span>map = L.map('map').setView([40.8154, -73.9123], 13);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Add OpenStreetMap tiles</p>
+<p class="p1"><span class="Apple-converted-space">                </span>L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>attribution: '© OpenStreetMap contributors',</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>errorTileUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgZmlsbD0iI2VlZSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5NYXAgVGlsZSBVbmF2YWlsYWJsZTwvdGV4dD48L3N2Zz4='</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}).addTo(map);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Add stories to map</p>
+<p class="p1"><span class="Apple-converted-space">                </span>addStoriesToMap();</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Add environmental data layers</p>
+<p class="p1"><span class="Apple-converted-space">                </span>addEnvironmentalLayers();</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Populate story list</p>
+<p class="p1"><span class="Apple-converted-space">                </span>updateStoryList();</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Hide loading indicator</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const loadingEl = document.getElementById('mapLoading');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (loadingEl) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>loadingEl.style.display = 'none';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>console.log('Map initialized successfully');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} catch (error) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>console.error('Error initializing map:', error);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById('map').innerHTML = '&lt;div class="flex items-center justify-center h-full bg-red-50"&gt;&lt;div class="text-center"&gt;&lt;p class="text-red-600"&gt;Map initialization failed. Please refresh the page.&lt;/p&gt;&lt;p class="text-sm text-gray-600 mt-2"&gt;Error: ' + error.message + '&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Add story markers to map</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function addStoriesToMap() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>stories.forEach(story =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const color = getCategoryColor(story.category);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const icon = getCategoryIcon(story.type);</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Create custom marker</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const marker = L.circleMarker([story.lat, story.lng], {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>radius: 12,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>fillColor: color,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>color: '#fff',</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>weight: 3,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>opacity: 1,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>fillOpacity: 0.8,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>className: 'story-marker'</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}).addTo(map);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Create popup content</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const popupContent = `</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="p-3 max-w-sm"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h4 class="font-semibold text-base mb-2"&gt;${story.title}&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p class="text-sm text-gray-600 mb-2"&gt;${story.author}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p class="text-sm text-gray-700 mb-3"&gt;${story.preview}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="flex flex-wrap gap-1 mb-3"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>${story.tags.map(tag =&gt; `&lt;span class="text-xs bg-gray-100 px-2 py-1 rounded"&gt;#${tag}&lt;/span&gt;`).join('')}</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;button onclick="showFullStory(${story.id})" class="w-full bg-green-600 text-white text-sm py-2 rounded hover:bg-green-700"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>Read Full Story</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>`;</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>marker.bindPopup(popupContent, {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>maxWidth: 300,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>className: 'custom-popup'</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>marker.on('click', () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>selectStory(story.id);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>storyMarkers.push({marker, story});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Add environmental data layers</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function addEnvironmentalLayers() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Air Quality Zones</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const airQualityZones = [</p>
+<p class="p1"><span class="Apple-converted-space">                </span>{lat: 40.8078, lng: -73.8820, radius: 800, intensity: 'high'},</p>
+<p class="p1"><span class="Apple-converted-space">                </span>{lat: 40.8155, lng: -73.9254, radius: 600, intensity: 'moderate'},</p>
+<p class="p1"><span class="Apple-converted-space">                </span>{lat: 40.8201, lng: -73.9067, radius: 500, intensity: 'moderate'}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>];</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>airQualityZones.forEach(zone =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const color = zone.intensity === 'high' ? '#dc2626' : '#eab308';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const circle = L.circle([zone.lat, zone.lng], {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>radius: zone.radius,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>fillColor: color,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>color: color,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>weight: 1,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>opacity: 0.3,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>fillOpacity: 0.2</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}).addTo(map);</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>circle.bindTooltip(`Air Quality: ${zone.intensity}`, {permanent: false});</p>
+<p class="p1"><span class="Apple-converted-space">                </span>airQualityLayers.push(circle);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Heat Islands</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const heatIslands = [</p>
+<p class="p1"><span class="Apple-converted-space">                </span>{lat: 40.8176, lng: -73.9182, radius: 700, intensity: 'extreme'},</p>
+<p class="p1"><span class="Apple-converted-space">                </span>{lat: 40.8065, lng: -73.9215, radius: 550, intensity: 'high'}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>];</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>heatIslands.forEach(island =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const color = island.intensity === 'extreme' ? '#ea580c' : '#f97316';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const circle = L.circle([island.lat, island.lng], {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>radius: island.radius,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>fillColor: color,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>color: color,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>weight: 1,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>opacity: 0.4,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>fillOpacity: 0.3</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}).addTo(map);</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>circle.bindTooltip(`Heat Island: ${island.intensity}`, {permanent: false});</p>
+<p class="p1"><span class="Apple-converted-space">                </span>heatIslandLayers.push(circle);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Get category color</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function getCategoryColor(category) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const colors = {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>'air-quality': '#dc2626',</p>
+<p class="p1"><span class="Apple-converted-space">                </span>'heat': '#ea580c',</p>
+<p class="p1"><span class="Apple-converted-space">                </span>'solutions': '#16a34a',</p>
+<p class="p1"><span class="Apple-converted-space">                </span>'historical': '#7c3aed',</p>
+<p class="p1"><span class="Apple-converted-space">                </span>'health': '#2563eb'</p>
+<p class="p1"><span class="Apple-converted-space">            </span>};</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return colors[category] || '#6b7280';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Get category icon</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function getCategoryIcon(type) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Returns appropriate icon based on story type</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return '📍'; // Simplified for this version</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Filter stories by category</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function filterStories(category) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>selectedCategory = category;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Update button styles</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.querySelectorAll('.filter-btn').forEach(btn =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>btn.className = 'filter-btn w-full text-left px-3 py-2 rounded text-sm hover:bg-gray-100';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.querySelector(`[data-category="${category}"]`).className =<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>'filter-btn w-full text-left px-3 py-2 rounded text-sm bg-green-100 text-green-800 border border-green-300';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Filter markers</p>
+<p class="p1"><span class="Apple-converted-space">            </span>storyMarkers.forEach(({marker, story}) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (category === 'all' || story.category === category) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>map.addLayer(marker);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>map.removeLayer(marker);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>updateStoryList();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Update story list in sidebar</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function updateStoryList() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const filteredStories = stories.filter(story =&gt;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>selectedCategory === 'all' || story.category === selectedCategory</p>
+<p class="p1"><span class="Apple-converted-space">            </span>);</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('storyCount').textContent = filteredStories.length;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const storyListHTML = filteredStories.map(story =&gt; `</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div onclick="focusOnStory(${story.id})" class="story-item p-3 rounded border cursor-pointer transition-all border-gray-200 hover:border-gray-300 ${selectedStory === story.id ? 'border-green-500 bg-green-50' : ''}"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="flex items-start justify-between mb-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h4 class="font-medium text-sm"&gt;${story.title}&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="w-4 h-4 rounded" style="background-color: ${getCategoryColor(story.category)}"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p class="text-xs text-gray-600 mb-2"&gt;${story.author}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p class="text-xs text-gray-700"&gt;${story.preview.substring(0, 100)}...&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="flex items-center justify-between mt-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;span class="text-xs px-2 py-1 rounded text-white" style="background-color: ${getCategoryColor(story.category)}"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>${story.category.replace('-', ' ')}</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;span class="text-xs text-gray-500"&gt;${story.timestamp}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>`).join('');</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('storyList').innerHTML = storyListHTML;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Focus on specific story</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function focusOnStory(storyId) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const story = stories.find(s =&gt; s.id === storyId);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (story) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>map.setView([story.lat, story.lng], 16);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>selectStory(storyId);</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Open popup</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const markerData = storyMarkers.find(m =&gt; m.story.id === storyId);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (markerData) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>markerData.marker.openPopup();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Select story</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function selectStory(storyId) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>selectedStory = storyId;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>updateStoryList();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Show full story</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function showFullStory(storyId) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const story = stories.find(s =&gt; s.id === storyId);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (story) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>alert(`Full Story: ${story.title}\n\n${story.fullStory}`);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>// In a real implementation, you'd open a modal or navigate to a detailed page</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Toggle data layers</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function toggleLayer(layerType) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (layerType === 'airQuality') {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const isChecked = document.getElementById('airQualityLayer').checked;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>airQualityLayers.forEach(layer =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (isChecked) {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>map.addLayer(layer);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>map.removeLayer(layer);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} else if (layerType === 'heatIsland') {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const isChecked = document.getElementById('heatIslandLayer').checked;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>heatIslandLayers.forEach(layer =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (isChecked) {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>map.addLayer(layer);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>map.removeLayer(layer);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} else if (layerType === 'stories') {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const isChecked = document.getElementById('storiesLayer').checked;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>storyMarkers.forEach(({marker, story}) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (isChecked &amp;&amp; (selectedCategory === 'all' || story.category === selectedCategory)) {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>map.addLayer(marker);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>map.removeLayer(marker);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Search for location</p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function searchLocation() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const query = document.getElementById('searchInput').value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (!query) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>alert('Please enter a location to search for.');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (!map) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>alert('Map is not yet initialized. Please wait a moment and try again.');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const response = await fetch(</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>`https://nominatim.openstreetmap.org/search?format=json&amp;q=${encodeURIComponent(query)}&amp;limit=1&amp;countrycodes=us`</p>
+<p class="p1"><span class="Apple-converted-space">                </span>);</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (!response.ok) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>throw new Error(`Search failed: ${response.status}`);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>const results = await response.json();</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (results.length &gt; 0) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const { lat, lon, display_name } = results[0];</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>map.setView([parseFloat(lat), parseFloat(lon)], 15);</p>
+<p class="p2"><span class="Apple-converted-space">                    </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>// Optional: Add a temporary marker to show the searched location</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (window.searchMarker) {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>map.removeLayer(window.searchMarker);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>window.searchMarker = L.marker([parseFloat(lat), parseFloat(lon)])</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>.addTo(map)</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>.bindPopup(`&lt;strong&gt;Search Result:&lt;/strong&gt;&lt;br&gt;${display_name}`)</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>.openPopup();</p>
+<p class="p2"><span class="Apple-converted-space">                    </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>console.log('Search successful:', display_name);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>alert('Location not found. Try searching for a specific address, neighborhood, or landmark (e.g., "South Bronx, NY" or "Hunt\'s Point, Bronx").');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} catch (error) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>console.error('Search error:', error);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>alert('Search temporarily unavailable. Please check your internet connection and try again.');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Allow enter key for search</p>
+<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('searchInput').addEventListener('keypress', function(e) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (e.key === 'Enter') {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>searchLocation();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Check if Leaflet is loaded and initialize map</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function checkLeafletAndInit() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (typeof L !== 'undefined') {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>initMap();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>console.log('Waiting for Leaflet to load...');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>setTimeout(checkLeafletAndInit, 100);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Initialize map when page loads</p>
+<p class="p1"><span class="Apple-converted-space">        </span>document.addEventListener('DOMContentLoaded', function() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>checkLeafletAndInit();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
